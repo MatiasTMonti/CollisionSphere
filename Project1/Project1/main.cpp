@@ -1,7 +1,25 @@
 #include <cmath>
 #include <iostream>
 
+struct Vector3
+{
+	float x, y, z;
+};
+
+struct Cube
+{
+	Vector3 pos;
+	Vector3 size;
+};
+
+struct Sphere
+{
+	Vector3 pos;
+	float radius;
+};
+
 bool CollisionCircleRec(float rectX, float rectY, float circleX, float circleY, float distance, float radius, float width, float height, float pointX, float pointY);
+bool CollisionSphereCube(Vector3 p, Sphere sphere, Cube cube, float hypotenuse1, float distance);
 
 int main()
 {
@@ -16,10 +34,18 @@ int main()
 	float px = 0;
 	float py = 0;
 
+	Vector3 p;
+
+	Sphere sphere;
+	Cube cube;
+	float hypotenuse1;
+
 	if (CollisionCircleRec(x, y, cx, cy, distancia, r, w, h, px, py))
 	{
 		std::cout << "Chocan" << std::endl;
 	}
+
+	CollisionSphereCube(p, sphere, cube, hypotenuse1, distancia);
 }
 
 bool CollisionCircleRec(float rectX, float rectY, float circleX, float circleY, float distance, float radius, float width, float height, float pointX, float pointY)
@@ -62,5 +88,31 @@ bool CollsionSpheres(float distance, float distance2, float circleX, float circl
 	if (distance2 < radius1 + radius2)
 	{
 		return true;
+	}
+}
+
+bool CollisionSphereCube(Vector3 p, Sphere sphere, Cube cube, float hypotenuse1, float distance)
+{
+	p.x = sphere.pos.x;
+
+	if (p.x < cube.pos.x) p.x = cube.pos.x;
+	if (p.x > cube.pos.x + cube.size.x) p.x = cube.pos.x + cube.size.x;
+
+	p.y = sphere.pos.y;
+
+	if (p.y < cube.pos.y) p.y = cube.pos.y;
+	if (p.y > cube.pos.y + cube.size.y) p.y = cube.pos.y + cube.size.y;
+
+	p.z = sphere.pos.z;
+
+	if (p.z < cube.pos.z) p.z = cube.pos.z;
+	if (p.z > cube.pos.z + cube.size.z) p.z = cube.pos.z + cube.size.z;
+
+	hypotenuse1 = sqrt((sphere.pos.x - p.x) * (sphere.pos.x - p.x) + (sphere.pos.y - p.y) * (sphere.pos.y - p.y));
+
+	distance = sqrt(hypotenuse1 * hypotenuse1 + (sphere.pos.z - p.z) * (sphere.pos.z - p.z));
+
+	if (distance < sphere.radius) {
+		std::cout << "Colisiona" << std::endl;
 	}
 }
